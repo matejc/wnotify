@@ -3,7 +3,7 @@ import socket
 import os
 
 
-HOST, PORT = "192.168.1.20", 23567
+HOST, PORT = "localhost", 23567
 PATH = os.path.join(os.path.split(os.path.abspath(__file__))[0], "notify.txt")
 PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
 
