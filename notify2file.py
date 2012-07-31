@@ -1,7 +1,10 @@
 import weechat
 import os
+import time
 
-weechat.register('notify2file', '', '1.0', 'GPL', 'WeeChat script for writing notification messages to file.', '', '')
+TIME_FORMAT = "[%H:%M]"
+
+weechat.register('notify2file', '', '1.1', 'GPL', 'WeeChat script for writing notification messages to file.', '', '')
 
 weechat.hook_signal('weechat_pv', 'on_priv', '')
 weechat.hook_signal('weechat_highlight', 'on_highlight', '')
@@ -18,6 +21,8 @@ def on_priv(data, signal, signal_data):
 
 def append_notification(message):
     notifyfile = open(notify_txt, "a")
-    notifyfile.write(message)
-    notifyfile.write("\n")
+    notifyfile.write("{} {}\n".format(
+        time.strftime(TIME_FORMAT, time.localtime()),
+        message
+    ))
     notifyfile.close()

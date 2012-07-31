@@ -8,7 +8,6 @@ PORT = 23567
 PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
 
 
-
 prev_data = ""
 
 def onecycle():
@@ -16,9 +15,9 @@ def onecycle():
     s.connect((ADDRESS, PORT))
 
     s.settimeout(5)
-    
+
     s.sendall( PASSWORD )
-    
+
     return_data = s.recv(1024)
     s.close()
 
@@ -28,9 +27,8 @@ def onecycle():
         prev_data = return_data
 
 
-
 try:
-    
+
     while True:
         try:
             onecycle()
