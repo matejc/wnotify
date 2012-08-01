@@ -46,7 +46,7 @@ except ImportError:
             try:
                 self.handle_try()
             except Exception as e:
-                self.request.sendall( "ServerError: {}".format(str(e)) )
+                self.request.sendall( "ServerError: {0}".format(str(e)) )
             finally:
                 self.request.close()
     
