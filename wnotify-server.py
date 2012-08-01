@@ -1,11 +1,12 @@
 
-def weechat_plugin():
+try:
+    import weechat
     import os
     import time
     
     TIME_FORMAT = "[%H:%M]"
     
-    weechat.register('notify2file', '', '1.1', 'GPL', 'WeeChat script for writing notification messages to file.', '', '')
+    weechat.register('wnotify', '', '1.4', 'GPL', 'WeeChat script for writing notification messages to file.', '', '')
     
     weechat.hook_signal('weechat_pv', 'on_priv', '')
     weechat.hook_signal('weechat_highlight', 'on_highlight', '')
@@ -29,7 +30,7 @@ def weechat_plugin():
         notifyfile.close()
 
 
-def wnotify_server():
+except ImportError:
     import SocketServer
     import socket
     import os
@@ -87,9 +88,3 @@ def wnotify_server():
         if server != None:
             server.shutdown()
         print "Server killed!"
-
-try:
-    import weechat
-    weechat_plugin()
-except ImportError:
-    wnotify_server()
