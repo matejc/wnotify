@@ -32,8 +32,8 @@ try:
     while True:
         try:
             onecycle()
-        except:
-            pass
+        except Exception as e:
+            print str(e)
         time.sleep(10)
 
 except KeyboardInterrupt:
