@@ -23,7 +23,7 @@ try:
     
     def append_notification(message):
         notifyfile = open(notify_txt, "a")
-        notifyfile.write("{} {}\n".format(
+        notifyfile.write("{0} {1}\n".format(
             time.strftime(TIME_FORMAT, time.localtime()),
             message
         ))
