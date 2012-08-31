@@ -39,6 +39,8 @@ Hint: At ubuntu/debian/mint you can find **/full/path/python** with::
 On client
 ---------
 
+Dependency: Tk (for notification window)
+
 To connect to server from your client(needed to be done just once)::
 
   $ cd
