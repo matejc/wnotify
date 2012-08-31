@@ -1,38 +1,14 @@
 import socket
 import time
-import os
-from Tkinter import *
-
+import mynotify
 
 ADDRESS = "localhost"
 PORT = 23567
 PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
 
-
 prev_data = ""
+myn = mynotify.Notification()
 
-
-def notifysend(data):
-    root = Tk()
-
-    w = Text(root, width=16, height=6)
-
-    print dir(w)
-
-    def click(arg):
-        root.destroy()
-
-    w.bind("<Double-Button-1>", click)
-
-    w.insert(INSERT, data)
-
-
-    w.config(state=DISABLED)
-    w.pack()
-
-    #root.geometry("{0}x{1}-10+10".format(500, 300))
-    root.wm_attributes("-topmost", 1)
-    root.mainloop()
 
 def onecycle():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,7 +16,7 @@ def onecycle():
 
     s.settimeout(5)
 
-    s.sendall( PASSWORD )
+    s.sendall(PASSWORD)
 
     return_data = s.recv(1024)
     s.close()
@@ -50,7 +26,7 @@ def onecycle():
         print "DATA RECEIVED!"
         print return_data
         #os.system("notify-send WeeChat \"%s\"" % return_data)  # not reliable!
-        notifysend(return_data)
+        myn.notify("WeeChat", return_data, mynotify.Notification.N_BLUE)
         prev_data = return_data
 
 try:
