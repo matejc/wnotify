@@ -29,8 +29,8 @@ def onecycle():
         myn.notify("WeeChat", return_data, mynotify.Notification.N_BLUE)
         prev_data = return_data
 
-try:
 
+try:
     while True:
         try:
             onecycle()
