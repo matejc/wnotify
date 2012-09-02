@@ -5,14 +5,12 @@
 import Tkinter
 import string
 import threading
-import time
 
 
 class Notification:
 
     N_BLUE = ("white", "#000022", "blue")
     N_GREEN = ("white", "#002200", "green")
-
 
     class LifeThread(threading.Thread):
         def __init__(self, parent, title, data, colors):
@@ -32,10 +30,6 @@ class Notification:
             self._notify()
 
         def _notify(self):
-            foreground = self.colors[0]
-            background = self.colors[1]
-            border_color = self.colors[2]
-
             self.root = Tkinter.Tk()
             self.root.withdraw()
 
@@ -65,7 +59,7 @@ class Notification:
                 relief=Tkinter.FLAT,
                 borderwidth=5,
                 highlightthickness=0,
-                highlightbackground=background
+                highlightbackground=self.colors[1]
             )
             self.text.config(font=(None, 9))
             self.text.bind("<Button-1>", click)
@@ -88,7 +82,7 @@ class Notification:
             self.text['fg'] = self.colors[0]
             self.text['bg'] = self.colors[1]
             dataarray = self.data.split("\n")
-            dataarray = [s for s in dataarray if string.strip(s)]
+            dataarray = [s if len(s) <= 100 else "{0}...".format(s[:100]) for s in dataarray if string.strip(s)]
             data_width = max([len(s) for s in dataarray])
             data_height = len(dataarray)
             self.text.config(state=Tkinter.NORMAL)
