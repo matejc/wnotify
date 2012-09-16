@@ -6,12 +6,24 @@ WeeChat remote notification.
 On server
 ---------
 
-Hint: This python script is WeeChat plugin and server at the same time.
+Dependency: openssl
+
+Create certificate for SSL connection in
+the same directory where wnotify-server.py will be::
+
+  $ openssl genrsa -des3 -out server.key 4096
+  $ openssl rsa -in server.key -out server.key.insecure
+  $ mv server.key server.key.secure
+  $ mv server.key.insecure server.key
+  $ openssl req -new -key server.key -out server.csr
+  $ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
 On the server where WeeChat is running open shell and do::
 
   $ cd ~/.weechat/python/autoload
   $ wget https://raw.github.com/matej64/wnotify/master/wnotify-server.py
+
+Hint: This python script is WeeChat plugin and server at the same time.
 
 Inside WeeChat run this command::
   

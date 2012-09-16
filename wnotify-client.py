@@ -1,3 +1,4 @@
+import ssl
 import socket
 import time
 import mynotify
@@ -12,6 +13,7 @@ myn = mynotify.Notification()
 
 def onecycle():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s = ssl.wrap_socket(s)
     s.connect((ADDRESS, PORT))
 
     s.settimeout(5)

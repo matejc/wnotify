@@ -1,8 +1,8 @@
+import time
 
 try:
     import weechat
     import os
-    import time
 
     TIME_FORMAT = "[%H:%M]"
 
@@ -32,14 +32,16 @@ try:
 
 except ImportError:
     import SocketServer
-    import socket
     import os
-    import time
+    import ssl
+    import socket
 
     HOST, PORT = "localhost", 23567
     PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
 
-    PATH = os.path.join(os.path.split(os.path.abspath(__file__))[0], "notify.txt")
+    PATH = os.path.split(os.path.abspath(__file__))[0]
+
+    notify_txt = os.path.join(PATH, "notify.txt")
 
     class MyTCPHandler(SocketServer.BaseRequestHandler):
 
@@ -48,8 +50,9 @@ except ImportError:
                 self.handle_try()
             except Exception as e:
                 log = open("/tmp/wnotify-server.log", "a")
-                log.write("{0}: {1}".format(str(time.time()),str(e)))
+                log.write("{0}: {1}".format(str(time.time()), str(e)))
                 log.close()
+                print str(e)
             finally:
                 self.request.close()
 
@@ -60,23 +63,39 @@ except ImportError:
             if ps != PASSWORD:
                 raise Exception("PERROR")
 
-            fnotify = open(PATH)
+            fnotify = open(notify_txt)
             lines = fnotify.readlines()
             fnotify.close()
 
             lines = lines[-3:]
-            self.request.sendall( "\n".join(lines) )
+            self.request.sendall("\n".join(lines))
 
-            fnotify = open(PATH, "w")
+            fnotify = open(notify_txt, "w")
             fnotify.writelines(lines)
             fnotify.close()
 
-
     class MyTCPServer(SocketServer.TCPServer):
+
+        def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
+            # See SocketServer.TCPServer.__init__
+            # (added ssl-support):
+            SocketServer.BaseServer.__init__(
+                self, server_address, RequestHandlerClass
+            )
+            self.socket = ssl.wrap_socket(
+                socket.socket(self.address_family, self.socket_type),
+                server_side=True,
+                certfile=os.path.join(PATH, "server.crt"),
+                keyfile=os.path.join(PATH, "server.key")
+            )
+
+            if bind_and_activate:
+                self.server_bind()
+                self.server_activate()
+
         def server_bind(self):
             self.allow_reuse_address = True
             SocketServer.TCPServer.server_bind(self)
-
 
     server = None
     try:
