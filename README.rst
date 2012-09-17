@@ -20,18 +20,18 @@ the same directory where wnotify-server.py will be::
 
 On the server where WeeChat is running open shell and do::
 
-  $ cd ~/.weechat/python/autoload
-  $ wget https://raw.github.com/matej64/wnotify/master/wnotify-server.py
+  $ cd ~/.weechat/python/
+  $ wget --no-check-certificate https://raw.github.com/matejc/wnotify/master/wnotify-server.py
 
 Hint: This python script is WeeChat plugin and server at the same time.
 
 Inside WeeChat run this command::
   
-  /python autoload
+  /python load python/wnotify-server.py
 
 Go back to shell and run::
 
-  $ python ~/.weechat/python/autoload/wnotify-server.py &
+  $ python ~/.weechat/python/wnotify-server.py &
 
 To make sure that python scripts run on server every time you boot it, run this command in shell as user::
   
@@ -39,7 +39,7 @@ To make sure that python scripts run on server every time you boot it, run this 
 
 Add this line at the end::
   
-  @reboot /full/path/python /home/username/.weechat/python/autoload/wnotify-server.py
+  @reboot /full/path/python /home/username/.weechat/python/wnotify-server.py
 
 Save and close it.
 
@@ -56,7 +56,7 @@ Dependency: Tk (for notification window)
 To connect to server from your client(needed to be done just once)::
 
   $ cd
-  $ wget https://raw.github.com/matej64/wnotify/master/wnotify-client.py
+  $ wget --no-check-certificate https://raw.github.com/matejc/wnotify/master/wnotify-client.py
   $ ssh user@server.xyz -L 23567:localhost:23567 2> ~/.ssh-errors.log
   $ python ~/wnotify-client.py &
 
