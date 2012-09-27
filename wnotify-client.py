@@ -2,25 +2,36 @@ import ssl
 import socket
 import time
 import mynotify
+import os
+import json
 
-ADDRESS = "localhost"
-PORT = 23567
-PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
 
+def get_real_path():
+    abspath = os.path.abspath(__file__)
+    if os.path.islink(abspath):
+        return os.readlink(abspath)
+    else:
+        return abspath
+
+prefix = os.path.dirname(get_real_path())
 prev_data = ""
 myn = mynotify.Notification()
+config = json.load(open(os.path.join(prefix, "wnclient.conf")))
+
+if config["password"] is "changeme":
+    print "Change the password in 'wnclient.conf' file"
 
 
 def onecycle():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s = ssl.wrap_socket(s)
-    s.connect((ADDRESS, PORT))
+    s.connect((config["address"], config["port"]))
 
-    s.settimeout(5)
+    s.settimeout(config["timeout"])
 
-    s.sendall(PASSWORD)
+    s.sendall(config["password"])
 
-    return_data = s.recv(1024)
+    return_data = s.recv(512)
     s.close()
 
     global prev_data
@@ -28,7 +39,13 @@ def onecycle():
         print "DATA RECEIVED!"
         print return_data
         #os.system("notify-send WeeChat \"%s\"" % return_data)  # not reliable!
-        myn.notify("WeeChat", return_data, mynotify.Notification.N_BLUE)
+        myn.notify(
+            "WeeChat",
+            return_data,
+            colors=config["colors"],
+            size_heading=config["size_heading"],
+            size_text=config["size_text"]
+        )
         prev_data = return_data
 
 
@@ -38,7 +55,7 @@ try:
             onecycle()
         except Exception as e:
             print str(e)
-        time.sleep(10)
+        time.sleep(config["interval"])
 
 except KeyboardInterrupt:
     print "\nUser killed the program!"

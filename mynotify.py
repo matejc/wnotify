@@ -13,13 +13,23 @@ class Notification:
     N_GREEN = ("white", "#002200", "green")
 
     class LifeThread(threading.Thread):
-        def __init__(self, parent, title, data, colors):
+        def __init__(
+                self,
+                parent,
+                title,
+                data,
+                colors,
+                size_heading,
+                size_text
+        ):
             threading.Thread.__init__(self)
             self.end = False
             self.parent = parent
             self.title = title
             self.data = data
             self.colors = colors
+            self.size_heading = size_heading
+            self.size_text = size_text
             self.daemon = True
             self.start()
 
@@ -49,7 +59,6 @@ class Notification:
                 relief=Tkinter.FLAT,
                 borderwidth=5
             )
-            self.label.config(font=(None, 11, 'bold'))
             self.label.bind("<Button-1>", click)
             self.label.pack()
 
@@ -61,7 +70,6 @@ class Notification:
                 highlightthickness=0,
                 highlightbackground=self.colors[1]
             )
-            self.text.config(font=(None, 9))
             self.text.bind("<Button-1>", click)
             self.text.pack()
 
@@ -73,16 +81,20 @@ class Notification:
         def change_notification(self, title, data, colors):
             self.title = title
             self.data = data
-            self.colors = colors
+            if colors:
+                self.colors = colors
+            else:
+                self.colors = self.parent.N_BLUE
 
             self.label['text'] = self.title
             self.label['fg'] = self.colors[0]
             self.label['bg'] = self.colors[1]
+            self.label.config(font=(None, self.size_heading, 'bold'))
 
             self.text['fg'] = self.colors[0]
             self.text['bg'] = self.colors[1]
             dataarray = self.data.split("\n")
-            dataarray = [s if len(s) <= 100 else "{0}...".format(s[:100]) for s in dataarray if string.strip(s)]
+            dataarray = [s[:100] for s in dataarray if string.strip(s)]
             data_width = max([len(s) for s in dataarray])
             data_height = len(dataarray)
             self.text.config(state=Tkinter.NORMAL)
@@ -91,6 +103,7 @@ class Notification:
             self.text.config(state=Tkinter.DISABLED)
             self.text['width'] = data_width
             self.text['height'] = data_height
+            self.text.config(font=(None, self.size_text))
 
             self.window['bg'] = self.colors[1]
             self.window['highlightbackground'] = self.colors[2]
@@ -101,11 +114,24 @@ class Notification:
     def is_alive(self):
         return hasattr(self, "life") and self.life and not self.life.end
 
-    def notify(self, title, data, colors):
+    def notify(self, title, data, colors=None, size_heading=9, size_text=8):
         if self.is_alive():
-            self.life.change_notification(title, data, colors)
+            self.life.change_notification(
+                title,
+                data,
+                colors,
+                size_heading,
+                size_text
+            )
         else:
-            self.life = Notification.LifeThread(self, title, data, colors)
+            self.life = Notification.LifeThread(
+                self,
+                title,
+                data,
+                colors,
+                size_heading,
+                size_text
+            )
 
     def show(self):
         self.life.window.deiconify()
