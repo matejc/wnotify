@@ -1,0 +1,11 @@
+{
+    "address": "localhost",
+    "port": 23567,
+    "password": "changeme",
+    "notifyfile": "notify.txt",
+    "logfile": "wnserver.log",
+    "certfile": "server.crt",
+    "keyfile": "server.key",
+    "linelimit": 50,
+    "timeformat": "[%H:%M]"
+}

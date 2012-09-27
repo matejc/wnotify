@@ -1,0 +1,10 @@
+{
+    "address": "my.server-domain.xyz",
+    "port": 23567,
+    "password": "changeme",
+    "colors": ["#CCFFCC", "#001100", "green"],
+    "size_heading": 9,
+    "size_text": 9,
+    "timeout": 5,
+    "interval": 10
+}
