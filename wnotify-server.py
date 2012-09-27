@@ -1,17 +1,38 @@
 import time
+import os
+import json
+
+
+def get_real_path():
+    abspath = os.path.abspath(__file__)
+    if os.path.islink(abspath):
+        return os.readlink(abspath)
+    else:
+        return abspath
+
+prefix = os.path.dirname(get_real_path())
+config = json.load(open(os.path.join(prefix, "wnserver.conf")))
 
 try:
     import weechat
-    import os
+    import string
 
-    TIME_FORMAT = "[%H:%M]"
+    TIME_FORMAT = config["timeformat"]
 
-    weechat.register('wnotify', '', '1.4', 'GPL', 'WeeChat script for writing notification messages to file.', '', '')
+    weechat.register(
+        'wnotify',
+        '',
+        '2.0',
+        'GPL',
+        'WeeChat script for writing notification messages to file.',
+        '',
+        ''
+    )
 
     weechat.hook_signal('weechat_pv', 'on_priv', '')
     weechat.hook_signal('weechat_highlight', 'on_highlight', '')
 
-    notify_txt = os.path.join(os.path.split(os.path.abspath(__file__))[0], "notify.txt")
+    notify_txt = os.path.join(prefix, config["notifyfile"])
 
     def on_highlight(data, signal, signal_data):
         append_notification(signal_data)
@@ -23,7 +44,10 @@ try:
 
     def append_notification(message):
         notifyfile = open(notify_txt, "a")
-        notifyfile.write("{0}	{1}\n".format(
+        message = message if len(message) <= config["linelimit"] else \
+            "{0}...".format(message[:config["linelimit"]])
+        message = string.replace(message, "\t", ": ", 1)
+        notifyfile.write("{0} {1}\n".format(
             time.strftime(TIME_FORMAT, time.localtime()),
             message
         ))
@@ -32,16 +56,13 @@ try:
 
 except ImportError:
     import SocketServer
-    import os
     import ssl
     import socket
 
-    HOST, PORT = "localhost", 23567
-    PASSWORD = "er98vzt2945z42zt8j798z7TZ=/(Tn675ev5v6584553W$47e9876Tvl3py7"
+    notify_txt = os.path.join(prefix, config["notifyfile"])
 
-    PATH = os.path.split(os.path.abspath(__file__))[0]
-
-    notify_txt = os.path.join(PATH, "notify.txt")
+    if config["password"] is "changeme":
+        print "Change the password in 'wnserver.conf' file"
 
     class MyTCPHandler(SocketServer.BaseRequestHandler):
 
@@ -49,7 +70,7 @@ except ImportError:
             try:
                 self.handle_try()
             except Exception as e:
-                log = open("/tmp/wnotify-server.log", "a")
+                log = open(config["logfile"], "a")
                 log.write("{0}: {1}".format(str(time.time()), str(e)))
                 log.close()
                 print str(e)
@@ -59,8 +80,8 @@ except ImportError:
         def handle_try(self):
             self.request.settimeout(5)
 
-            ps = self.request.recv(60)
-            if ps != PASSWORD:
+            ps = self.request.recv(len(config["password"]))
+            if ps != config["password"]:
                 raise Exception("PERROR")
 
             fnotify = open(notify_txt)
@@ -85,8 +106,8 @@ except ImportError:
             self.socket = ssl.wrap_socket(
                 socket.socket(self.address_family, self.socket_type),
                 server_side=True,
-                certfile=os.path.join(PATH, "server.crt"),
-                keyfile=os.path.join(PATH, "server.key")
+                certfile=os.path.join(prefix, config["certfile"]),
+                keyfile=os.path.join(prefix, config["keyfile"])
             )
 
             if bind_and_activate:
@@ -100,12 +121,12 @@ except ImportError:
     server = None
     try:
         # Create the server, binding to host address and port
-        server = MyTCPServer((HOST, PORT), MyTCPHandler)
+        server = MyTCPServer((config["address"], config["port"]), MyTCPHandler)
         server.serve_forever()
     except KeyboardInterrupt:
         print "\nUser killed the program!"
 
     finally:
-        if server != None:
+        if server is not None:
             server.shutdown()
         print "Server killed!"
