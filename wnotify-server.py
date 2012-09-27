@@ -78,22 +78,23 @@ except ImportError:
                 self.request.close()
 
         def handle_try(self):
-            self.request.settimeout(5)
+            self.request.settimeout(config["timeout"])
 
             ps = self.request.recv(len(config["password"]))
             if ps != config["password"]:
                 raise Exception("PERROR")
 
-            fnotify = open(notify_txt)
-            lines = fnotify.readlines()
-            fnotify.close()
+            if os.path.exists(notify_txt):
+                fnotify = open(notify_txt)
+                lines = fnotify.readlines()
+                fnotify.close()
 
-            lines = lines[-3:]
-            self.request.sendall("\n".join(lines))
+                lines = lines[-3:]
+                self.request.sendall("\n".join(lines))
 
-            fnotify = open(notify_txt, "w")
-            fnotify.writelines(lines)
-            fnotify.close()
+                fnotify = open(notify_txt, "w")
+                fnotify.writelines(lines)
+                fnotify.close()
 
     class MyTCPServer(SocketServer.TCPServer):
 

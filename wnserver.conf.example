@@ -7,5 +7,6 @@
     "certfile": "server.crt",
     "keyfile": "server.key",
     "linelimit": 50,
-    "timeformat": "[%H:%M]"
+    "timeformat": "[%H:%M]",
+    "timeout": 5
 }
