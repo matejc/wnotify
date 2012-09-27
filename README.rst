@@ -3,6 +3,8 @@ wnotify
 
 WeeChat remote notification.
 
+WORK IN PROGRESS!
+
 On server
 ---------
 
@@ -16,7 +18,7 @@ the same directory where wnotify-server.py will be::
   $ mv server.key server.key.secure
   $ mv server.key.insecure server.key
   $ openssl req -new -key server.key -out server.csr
-  $ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+  $ openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt
 
 On the server where WeeChat is running open shell and do::
 
