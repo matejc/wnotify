@@ -73,18 +73,21 @@ class Notification:
             self.text.bind("<Button-1>", click)
             self.text.pack()
 
-            self.change_notification(self.title, self.data, self.colors)
+            self.change_notification(self.title, self.data, self.colors, self.size_heading, self.size_text)
 
             self.root.mainloop()
             self.end = True
 
-        def change_notification(self, title, data, colors):
+        def change_notification(self, title, data, colors, size_heading, size_text):
             self.title = title
             self.data = data
             if colors:
                 self.colors = colors
             else:
                 self.colors = self.parent.N_BLUE
+
+            self.size_heading = size_heading
+            self.size_text = size_text
 
             self.label['text'] = self.title
             self.label['fg'] = self.colors[0]
