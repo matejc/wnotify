@@ -3,15 +3,20 @@ wnotify
 
 WeeChat remote notification.
 
-WORK IN PROGRESS!
 
 On server
 ---------
 
 Dependency: openssl
 
-Create certificate for SSL connection in
-the same directory where wnotify-server.py will be::
+Connect to machine where your *weechat* is running and then::
+
+  $ cd ~/.weechat/python/
+  $ git clone git://github.com/matejc/wnotify.git
+  $ cd wnotify
+
+
+Create certificate for SSL connection::
 
   $ openssl genrsa -des3 -out server.key 4096
   $ openssl rsa -in server.key -out server.key.insecure
@@ -20,63 +25,71 @@ the same directory where wnotify-server.py will be::
   $ openssl req -new -key server.key -out server.csr
   $ openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt
 
-On the server where WeeChat is running open shell and do::
 
-  $ cd ~/.weechat/python/
-  $ wget --no-check-certificate https://raw.github.com/matejc/wnotify/master/wnotify-server.py
+Configuration (change at least *password* field AND bind *address*)::
 
-Hint: This python script is WeeChat plugin and server at the same time.
+  $ cp wnserver.conf.example wnserver.conf
+  $ nano wnserver.conf
 
-Inside WeeChat run this command::
-  
-  /python load python/wnotify-server.py
 
-Go back to shell and run::
+Link the *wnotify-server.py* to the autoload directory::
 
-  $ python ~/.weechat/python/wnotify-server.py &
+  $ ln -s ~/.weechat/python/wnotify/wnotify-server.py ~/.weechat/python/autoload/
 
-To make sure that python scripts run on server every time you boot it, run this command in shell as user::
+
+Activate weechat plugin, run this command inside weechat::
+
+  /python autoload
+
+
+Go back to shell and run to start the server::
+
+  $ python ~/.weechat/python/wnotify/wnotify-server.py &
+
+
+To make sure that python scripts run on server every time you boot it,
+run this command in shell as user::
   
   $ crontab -e
+
 
 Add this line at the end::
   
   @reboot /full/path/python /home/username/.weechat/python/wnotify-server.py
 
+
 Save and close it.
 
-Hint: At ubuntu/debian/mint you can find **/full/path/python** with::
+Hint: You can find **/full/path/python** with::
 
   $ which python
 
- 
+
 On client
 ---------
 
 Dependency: Tk (for notification window)
 
-To connect to server from your client(needed to be done just once)::
+Connect to machine where you want to notifications to be visible::
 
-  $ cd
-  $ wget --no-check-certificate https://raw.github.com/matejc/wnotify/master/wnotify-client.py
-  $ ssh user@server.xyz -L 23567:localhost:23567 2> ~/.ssh-errors.log
-  $ python ~/wnotify-client.py &
+  $ cd ~/some/path/
+  $ git clone git://github.com/matejc/wnotify.git
+  $ cd wnotify
 
-Hint: ssh command run everytime you want to have see notifications and see WeeChat 
 
-To make sure that python scripts run on client every time you boot it, run this command in shell as user::
-  
-  $ crontab -e
+Configuration (change *address* to servers ip or domain AND *password* to match servers)::
 
-Add this line at the end::
-  
-  @reboot /full/path/python /home/username/wnotify-client.py
+  $ cp wnserver.conf.example wnserver.conf
+  $ nano wnserver.conf
 
-Save and close it.
 
-Hint: to understand **-L 23567:localhost:23567** look **man ssh**
+Run::
 
-Hint: we added **2> ~/.ssh-errors.log** to pipe stderr to file 
+  $ python ~/some/path/wnotify/wnotify-client.py
+
+
+Run this command at every boot, by adding it to autostart in your desktop/window manager settings.
+
 
 That it! When you see notification on screen you can switch to terminal window where
 is WeeChat running and read the rest.
