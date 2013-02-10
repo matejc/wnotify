@@ -18,8 +18,8 @@ prev_data = ""
 myn = mynotify.Notification()
 config = json.load(open(os.path.join(prefix, "wnclient.conf")))
 
-if config["password"] is "changeme":
-    print "Change the password in 'wnclient.conf' file"
+if config["password"] == "changeme":
+    raise Exception("Change the password in 'wnclient.conf' file!")
 
 
 def onecycle():

@@ -61,8 +61,8 @@ except ImportError:
 
     notify_txt = os.path.join(prefix, config["notifyfile"])
 
-    if config["password"] is "changeme":
-        print "Change the password in 'wnserver.conf' file"
+    if config["password"] == "changeme":
+        raise Exception("Change the password in 'wnserver.conf' file!")
 
     class MyTCPHandler(SocketServer.BaseRequestHandler):
 
