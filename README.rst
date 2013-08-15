@@ -18,12 +18,7 @@ Connect to machine where your *weechat* is running and then::
 
 Create certificate for SSL connection::
 
-  $ openssl genrsa -des3 -out server.key 4096
-  $ openssl rsa -in server.key -out server.key.insecure
-  $ mv server.key server.key.secure
-  $ mv server.key.insecure server.key
-  $ openssl req -new -key server.key -out server.csr
-  $ openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt
+  $ openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -keyout server.key -out server.crt
 
 
 Configuration (change at least *password* field AND bind *address*)::
@@ -68,7 +63,7 @@ Hint: You can find **/full/path/python** with::
 On client
 ---------
 
-Dependency: Tk (for notification window)
+Dependency: Tk (for notification window) - NOT required, fallback is now to notify-send
 
 Connect to machine where you want to notifications to be visible::
 
