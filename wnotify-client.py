@@ -1,9 +1,17 @@
 import ssl
 import socket
 import time
-import mynotify
 import os
 import json
+
+try:
+    import Tkinter
+    Tkinter.Tk()  # if this passes, Tkinter is OK
+    import mynotify
+    myn = mynotify.Notification()
+    HAS_TKINTER = True
+except:
+    HAS_TKINTER = False
 
 
 def get_real_path():
@@ -15,7 +23,6 @@ def get_real_path():
 
 prefix = os.path.dirname(get_real_path())
 prev_data = ""
-myn = mynotify.Notification()
 config = json.load(open(os.path.join(prefix, "wnclient.conf")))
 
 if config["password"] == "changeme":
@@ -38,14 +45,22 @@ def onecycle():
     if return_data != prev_data:
         print "DATA RECEIVED!"
         print return_data
-        #os.system("notify-send WeeChat \"%s\"" % return_data)  # not reliable!
-        myn.notify(
-            "WeeChat",
-            return_data,
-            colors=config["colors"],
-            size_heading=config["size_heading"],
-            size_text=config["size_text"]
-        )
+
+        if HAS_TKINTER:
+            myn.notify(
+                "WeeChat",
+                return_data,
+                colors=config["colors"],
+                size_heading=config["size_heading"],
+                size_text=config["size_text"]
+            )
+        else:
+            os.system(
+                "notify-send --expire-time 3600 WeeChat \"{0}\"".format(
+                    return_data
+                )
+            )
+
         prev_data = return_data
 
 
